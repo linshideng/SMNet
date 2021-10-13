@@ -13,7 +13,7 @@ SMNet: Synchronous Multi-scale Low Light EnhancementNetwork with Local and Globa
 - pillow   5.2.0 
 
 ## Usage
-Tips: The h/w resolution of all input images should be shall be divided by 4.
+Tips: The h/w resolution of all input images shall be divided by 4.
 ### Testing
 To test the pre-trained model on your own images, run:
 
