@@ -13,11 +13,7 @@ SMNet: Synchronous Multi-scale Low Light EnhancementNetwork with Local and Globa
 - pillow   5.2.0 
 
 ## Usage
-<<<<<<< HEAD
 Tips: The h/w resolution of all input images   shall be divided by 4.
-=======
-Tips: The h/w resolution of all input images shall be divided by 4.
->>>>>>> 0a9205bb60ba0b7fcb3c4f32f5f4f93ff5850f31
 ### Testing
 To test the pre-trained model on your own images, run:
 
@@ -40,7 +36,7 @@ Before training  on your own dataset, you should place images like
     - low
 
 
-where low-light images are placed in low, ground truth are placed in high.
+where train/test low-light images are placed in low, train/test ground truth are placed in high.
 
 To train the model, run:
 ```
