@@ -1,4 +1,3 @@
-# from __future__ import print_function
 import argparse
 import torch
 import torchvision.transforms as transforms
@@ -12,49 +11,13 @@ from os import listdir
 import os
 
 from model import lowlightnet3 # LOL
-# from 母版_model_FiveK import lowlightnet3  # FiveK
 
 
-# Training settings
-parser = argparse.ArgumentParser(description='')
-
-parser.add_argument('--test_folder', type=str, default='/homesda/sdlin/PycharmProject/Low_Light_Images_Enhancement/LSD-lowlight/datasets/LOL/test/low',help='Location to input images')
-parser.add_argument('--modelfile', default='/homesda/sdlin/PycharmProject/Low_Light_Images_Enhancement/LSD-lowlight/model.pth', help='pretrained base model')
-parser.add_argument('--output', default='./output_test/', help='Location to save output images')
-parser.add_argument('--device', type=str, default='0')
-
-parser.add_argument('--testBatchSize', type=int, default=1, help='testing batch size')
-parser.add_argument('--gpu_mode', type=bool, default=True)
-parser.add_argument('--patch_size', type=int, default=256, help='0 to use original frame size')
-parser.add_argument('--stride', type=int, default=16, help='0 to use original patch size')
-parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
-parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
-parser.add_argument('--gpus', default=1, type=int, help='number of gpu')
-# parser.add_argument('--image_based', type=bool, default=True, help='use image or video based ULN')
-# parser.add_argument('--chop', type=bool, default=False)
-# parser.add_argument('--upscale_factor', type=int, default=1, help="super resolution upscale factor")
-# parser.add_argument('--chop_forward', type=bool, default=True)
-
-opt = parser.parse_args()
-
-gpus_list = range(opt.gpus)
-print(opt)
-
-cuda = opt.gpu_mode
-if cuda and not torch.cuda.is_available():
-    raise Exception("No GPU found, please run without --cuda")
-
-torch.manual_seed(opt.seed)
-if cuda:
-    torch.cuda.manual_seed(opt.seed)
-
-device = torch.device('cuda:{}'.format(opt.device))
-model = lowlightnet3()
-model = model.to(device)
-model.load_state_dict(torch.load(opt.modelfile))
-
-
-def eval():
+def eval(opt):
+    device = torch.device('cuda:{}'.format(opt.device))
+    model = lowlightnet3()
+    model = model.to(device)
+    model.load_state_dict(torch.load(opt.modelfile))
     model.eval()
     LL_filename = os.path.join(opt.test_folder)
     est_filename = os.path.join(opt.output)
@@ -91,11 +54,35 @@ def eval():
             print("===> Processing Image: %04d /%04d in %.4f s." % (i, LL_image.__len__(), (t1 - t0)))
     # print("Processing FPS: {} ".format(time_ave / LL_image.__len__() ))
 
+if __name__ == "__main__":
 
-transform = transforms.Compose([
-    transforms.ToTensor(),  # range [0, 255] -> [0.0,1.0]
-]
-)
+    parser = argparse.ArgumentParser(description='low-light image enhancement by SMNet')
+    parser.add_argument('--test_folder', type=str, default='./datasets/LOL/test/low',help='Location to input images')
+    parser.add_argument('--modelfile', default='./model.pth', help='pretrained model')
+    parser.add_argument('--output', default='./output_test/', help='Location to save output images')
+    parser.add_argument('--device', type=str, default='0')
 
-##Eval Start!!!!
-eval()
+    parser.add_argument('--testBatchSize', type=int, default=1, help='testing batch size')
+    parser.add_argument('--gpu_mode', type=bool, default=True)
+    parser.add_argument('--patch_size', type=int, default=256, help='0 to use original frame size')
+    parser.add_argument('--stride', type=int, default=16, help='0 to use original patch size')
+    parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
+    parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
+    parser.add_argument('--gpus', default=1, type=int, help='number of gpu')
+    # parser.add_argument('--image_based', type=bool, default=True, help='use image or video based ULN')
+    # parser.add_argument('--chop', type=bool, default=False)
+    # parser.add_argument('--upscale_factor', type=int, default=1, help="super resolution upscale factor")
+    # parser.add_argument('--chop_forward', type=bool, default=True)
+    
+    opt = parser.parse_args()
+    gpus_list = range(opt.gpus)
+    print(opt)
+
+    cuda = opt.gpu_mode
+    if cuda and not torch.cuda.is_available():
+        raise Exception("No GPU found, please run without --cuda")
+
+    torch.manual_seed(opt.seed)
+    if cuda:
+        torch.cuda.manual_seed(opt.seed)
+    eval(opt)
