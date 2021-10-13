@@ -59,7 +59,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='low-light image enhancement by SMNet')
     parser.add_argument('--test_folder', type=str, default='./datasets/LOL/test/low',help='Location to input images')
     parser.add_argument('--modelfile', default='./model.pth', help='pretrained model')
-    parser.add_argument('--output', default='./output_test/', help='Location to save output images')
+    parser.add_argument('--output', default='./output_test', help='Location to save output images')
     parser.add_argument('--device', type=str, default='0')
 
     parser.add_argument('--testBatchSize', type=int, default=1, help='testing batch size')

@@ -30,8 +30,12 @@ def cfg():
     parser = argparse.ArgumentParser(description='low-light image enhancement by SMNet')
     parser.add_argument('--trainset', type=str, default='./datasets/LOL/train', help='location of trainset') 
     parser.add_argument('--testset', type=str, default='./datasets/LOL/test', help='location of testset and ground truth') 
-
-
+    
+    parser.add_argument('--output', default='output')
+    parser.add_argument('--modelname', default='SMNet')
+    parser.add_argument('--deviceid',default='0')
+    parser.add_argument('--lr', type=float, default=5e-4, help='Learning Rate. Default=0.0001')# 
+    parser.add_argument('--lr_decay',type=float,default=1.2,help='Every 50 epoch, lr decay')
     parser.add_argument('--batchSize', type=int, default=10, help='training batch size') 
     parser.add_argument('--nEpochs', type=int, default=600, help='number of epochs to train for')
     parser.add_argument('--snapshots', type=int, default=5, help='Snapshots')
@@ -41,17 +45,11 @@ def cfg():
     parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
     parser.add_argument('--gpus', default=1, type=int, help='number of gpu')
     parser.add_argument('--patch_size', type=int, default=128, help='Size of cropped LR image')
-    # parser.add_argument('--isdimColor', default=True, help='synthesis at HSV color space')
-    # parser.add_argument('--isaddNoise', default=True, help='synthesis with noise')
-    
-    parser.add_argument('--modelname', default='20211013')
-    parser.add_argument('--deviceid',default='0')
     # parser.add_argument('--save_folder', default='models_LOL_add_x_bright/', help='Location to save checkpoint models')
-    parser.add_argument('--lr', type=float, default=5e-4, help='Learning Rate. Default=0.0001')# 
-    parser.add_argument('--lr_decay',type=float,default=1.2,help='Every 50 epoch, lr decay')
 
     opt = parser.parse_args()
     return opt
+
 def checkpoint(model, epoch, opt):
     save_folder = os.path.join('models',opt.modelname)   
     try:
@@ -82,7 +80,7 @@ def eval(model, epoch, writer, txt_write, opt):
     test_NL_folder = os.path.join( opt.testset,"high") 
     # test_LL_folder = "datasets/LOL/test/low/"
     # test_NL_folder = "datasets/LOL/test/high/"
-    test_est_folder = os.path.join("outputs",opt.modelname,'eopch_%04d'% (epoch))
+    test_est_folder = os.path.join(opt.output,opt.modelname,'eopch_%04d'% (epoch))
     try:
         os.stat(test_est_folder)
     except:
