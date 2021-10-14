@@ -16,14 +16,19 @@ SMNet is built by:
 ## Usage
 Tips: The h/w resolution of all input images   shall be divided by 4.
 ### Testing
-To test the pre-trained model on your own images, run:
+To test the pre-trained model on your own images, just run:
+```
+bash test.sh
+```
+
+or run:
 
 ```
 ptyhon test.py  --test_folder  path_to_images  --output save_images_here  --modelfile pretrained_model 
 ```
 Example:
 ```
-ptyhon test.py  --test_folder  ./datasets/LOL/test/low  path_to_images  --output  ./output_test  --modelfile ./model.pth
+ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model.pth
 ```
 
 ### Training
