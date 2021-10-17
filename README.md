@@ -1,5 +1,9 @@
 # SMNet
-SMNet: Synchronous Multi-scale Low Light EnhancementNetwork with Local and Global Concern
+SMNet: Synchronous Multi-scale Low Light EnhancementNetwork with Local and Global Concern.
+
+by SHIDENG LIN, FAN TANG, XINGJIA PAN, WEIMING DONG and CHANGSHENG XU.
+
+The SMNet has good performance to enhance low-light images.
 ## Abstract
 ## Method
 (framework)
@@ -30,9 +34,10 @@ ptyhon test.py  --test_folder  path_to_images  --output save_images_here  --mode
 ```
 Example:
 ```
-ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model_LOL.pth --modeltype lol
+ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model_LOL.pth --modeltype LOL
 ```
-You can change the `--test_folder` to test your own dataset.
+- You can change the `--test_folder` to test your own dataset.
+- You can use the pretrained model training on Adobe-MIT FiveK dataset by `--modelfile ./model_FIVEK.pth --modeltype FIVEK`
 ### Training
 Before training  on your own dataset, you should place images like 
 - your_dataset
