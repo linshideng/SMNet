@@ -10,8 +10,6 @@ from PIL import Image
 from os import listdir
 import os
 
-from model import lowlightnet3 # LOL
-
 
 def eval(opt):
     device = torch.device('cuda:{}'.format(opt.device))
@@ -42,12 +40,14 @@ def eval(opt):
 
             t0 = time.time()
             prediction = model(LL)
-
             t1 = time.time()
             time_ave += (t1 - t0)
-            
-            prediction = prediction.data[0].cpu().numpy().transpose(channel_swap)
-
+            if str.lower(opt.modeltype) == 'lol':
+                prediction = prediction.data[0].cpu().numpy().transpose(channel_swap)
+            elif str.lower(opt.modeltype) == 'fivek':
+                prediction = prediction[0].data[0].cpu().numpy().transpose(channel_swap)
+            else:    
+                prediction = prediction.data[0].cpu().numpy().transpose(channel_swap)
             prediction = prediction * 255.0
             prediction = prediction.clip(0, 255)
             Image.fromarray(np.uint8(prediction)).save(Est_img[i])
@@ -61,6 +61,7 @@ if __name__ == "__main__":
     parser.add_argument('--modelfile', default='./model.pth', help='pretrained model')
     parser.add_argument('--output', default='./output_test', help='Location to save output images')
     parser.add_argument('--device', type=str, default='0')
+    parser.add_argument('--modeltype', type=str, default='LOL', help="to choose pretrained model training on LOL or FiveK")
 
     parser.add_argument('--testBatchSize', type=int, default=1, help='testing batch size')
     parser.add_argument('--gpu_mode', type=bool, default=True)
@@ -80,9 +81,19 @@ if __name__ == "__main__":
 
     cuda = opt.gpu_mode
     if cuda and not torch.cuda.is_available():
-        raise Exception("No GPU found, please run without --cuda")
+        raise Exception("No GPU found!!")
 
     torch.manual_seed(opt.seed)
     if cuda:
         torch.cuda.manual_seed(opt.seed)
+    if str.lower(opt.modeltype) == 'lol':
+        from model_LOL import lowlightnet3
+
+    elif str.lower(opt.modeltype) == 'fivek':
+        from model_FiveK import lowlightnet3
+
+    else:
+        print("======>Now using default model LOL")
+        from model_LOL import lowlightnet3  
+           
     eval(opt)
