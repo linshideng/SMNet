@@ -23,16 +23,14 @@ class FusionLayer(nn.Module):
         avg = self.fc(avg).view(b, c, 1, 1)
         max = self.max_pool(x).view(b, c)
         max = self.fc(max).view(b, c, 1, 1)
-        fusion = self.fusion(avg+max) # 如果avg+max必须加一个conv才行吧
-
+        fusion = self.fusion(avg+max) 
         fusion = x * fusion.expand_as(x)
         fusion = fusion + x
         fusion = self.outlayer(fusion)
         return fusion
 
-# my model
 
-class NewEncoderBlock(nn.Module):  # like enlighten block
+class NewEncoderBlock(nn.Module):  
     def __init__(self, input_dim, out_dim, kernel_size, stride, padding):
         super(NewEncoderBlock, self).__init__()
         self.firstconv = ConvBlock(input_size=4,output_size=input_dim,kernel_size=3,stride=1,padding=1)
@@ -56,10 +54,7 @@ class ResidualDownSample(nn.Module):
     def __init__(self,in_channel,bias=False):
         super(ResidualDownSample,self).__init__()
         self.prelu = nn.PReLU()
-        # self.down = nn.Sequential(nn.Conv2d(in_channel,in_channel,3,1,1,bias=bias),
-        #                           nn.PReLU(),
-        #                           downsamp(channels=in_channel,filt_size=3,stride=2),
-        #                           nn.Conv2d(in_channel,in_channel*2,1,stride=1,padding=0,bias=bias))
+        
         self.conv1 = nn.Conv2d(in_channel,in_channel,3,1,1,bias=bias)
         self.downsamp = downsamp(channels=in_channel,filt_size=3,stride=2)
         self.conv2 = nn.Conv2d(in_channel,2*in_channel,1,stride=1,padding=0,bias=bias)
@@ -67,7 +62,6 @@ class ResidualDownSample(nn.Module):
         out = self.prelu(self.conv1(x))
         out = self.downsamp(out)
         out = self.conv2(out)
-        # out = self.down(x)
         return out
 
 class DownSample(nn.Module):
@@ -109,18 +103,12 @@ class UpSample(nn.Module):
         out = self.residualupsample(x)
         return out
 
-class EncoderBlock(nn.Module):  # 这里的EN是SGblock
+class EncoderBlock(nn.Module):  
     def __init__(self, input_dim, out_dim,):
         super(EncoderBlock, self).__init__()
         hidden = input_dim // 4  # 2021-3-30 8->4
         self.prelu = nn.PReLU()
-        # ConvBlock 自带Prelu
-        # self.SGblock = nn.Sequential(
-        #                 ConvBlock(input_dim,input_dim,3,1,1,isuseBN=False),
-        #                 ConvBlock(input_dim,hidden,1,1,0,isuseBN=False),
-        #                 ConvBlock(hidden,out_dim,1,1,0,isuseBN=False),
-        #                 ConvBlock(out_dim,out_dim,3,1,1,isuseBN=False))
-        # 修改了中间激活！~！！！！！
+        
         self.SGblock = nn.Sequential(
                         ConvBlock(input_dim,input_dim,3,1,1,isuseBN=False),
                         nn.Conv2d(input_dim,hidden,1,1,0),
@@ -140,14 +128,13 @@ class lowlightnet3(nn.Module):
         self.sigmoid = torch.nn.Sigmoid()
 
 
-        self.out_fushion = FusionLayer(3*dim, 3*dim)  # 参数是不是爆炸了
+        self.out_fushion = FusionLayer(3*dim, 3*dim)  
         self.out_conv2 = nn.Conv2d(3*dim, dim, 3, 1, 1)
         self.out_conv3 = nn.Conv2d(dim, 4, 3, 1, 1)
         self.out_conv4 = nn.Conv2d(4,3,1,1,0)
 
         self.firstconv = nn.Sequential(ConvBlock(input_size=4,output_size=dim,kernel_size=3,stride=1,padding=1),
                                        EncoderBlock(input_dim=dim,out_dim=dim))
-        # self.NewEnDecoder = NewEncoderBlock(input_dim=4,out_dim=dim,kernel_size=3,stride=1,padding=1)
         self.downsample   = DownSample(in_channel=dim,scale_factor=2)
         self.downsample2x = DownSample(in_channel=2*dim,scale_factor=2)
         self.upsample     = UpSample(in_channel=dim,scale_factor=2)
@@ -157,25 +144,20 @@ class lowlightnet3(nn.Module):
         self.endecoder2x  = EncoderBlock(2*dim,2*dim)
         self.endecoder4x  = EncoderBlock(4*dim,4*dim)
 
-        # self.endecoder1x = ConvBlock(dim,dim,3,1,1)
-        # self.endecoder2x = ConvBlock(2*dim,2*dim,3,1,1)
-        # self.endecoder4x = ConvBlock(4*dim,4*dim,3,1,1)
-
-
     def forward(self, x_ori, tar=None):
         x = x_ori
         x_bright, _ = torch.max(x_ori, dim=1, keepdim=True)
 
         x_in = torch.cat((x, x_bright), 1)
 
-        # feature extraction:encoder-decoder
+       
         f_endecoder = self.firstconv(x_in)
 
         # channel=3dim
         # here is 1st block out
         fullres = f_endecoder
         halfres = self.downsample(fullres)
-        quarres = self.downsample2x(halfres)  # 第二个downsample bug
+        quarres = self.downsample2x(halfres)  
 
         ende_quarres = self.endecoder4x(quarres)
         ende_quarres_up = self.upsample4x(ende_quarres)
@@ -186,8 +168,8 @@ class lowlightnet3(nn.Module):
 
 
         cat_all = torch.cat((ende_fullres_out,ende_halfres_up,ende_quarres_up_up),dim=1)
-        fusion_all = self.out_fushion(cat_all) #3dim
-        fusion_out = self.out_conv2(fusion_all)  #dim
+        fusion_all = self.out_fushion(cat_all) 
+        fusion_out = self.out_conv2(fusion_all)  
         fusion_out = fusion_out+fullres
 
         # here is 2nd block out
@@ -224,27 +206,10 @@ class lowlightnet3(nn.Module):
         fusion_out3 = self.out_conv2(fusion_all3)
         fusion_out3 = fusion_out3 + fullres3
 
-        # # here is 4th block out
-        # fullres4 = fusion_out3
-        # halfres4 = self.downsample(fullres4)
-        # quarres4 = self.downsample2x(halfres4)
-
-        # ende_quarres4 = self.endecoder4x(quarres4)
-        # ende_quarres_up4 = self.upsample4x(ende_quarres4)
-        # ende_quarres_up_up4 = self.upsample2x(ende_quarres_up4)
-        # ende_halfres4 = self.endecoder2x(self.prelu(halfres4) + ende_quarres_up4)
-        # ende_halfres_up4 = self.upsample2x(ende_halfres4)
-        # ende_fullres_out4 = self.endecoder1x(self.prelu(fullres4) + ende_halfres_up4)
-
-        # cat_all4 = torch.cat((ende_fullres_out4, ende_halfres_up4, ende_quarres_up_up4), dim=1)
-        # fusion_all4 = self.out_fushion(cat_all4)
-        # fusion_out4 = self.out_conv2(fusion_all4)
-        # fusion_out4 = fusion_out4 + fullres4
-
         # real out
-        out = self.prelu(fusion_out3)  # 64
-        out = self.out_conv3(out)  # 64 to 4
-        out = out  +  x_bright # 2021-1-4 remove last residual here # 加了x_bright
+        out = self.prelu(fusion_out3) 
+        out = self.out_conv3(out)  
+        out = out  +  x_bright
         out = self.out_conv4(out)
         return out
 

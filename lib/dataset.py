@@ -9,7 +9,6 @@ import numpy as np
 import torch.utils.data as data
 from PIL import Image, ImageOps, ImageEnhance
 import skimage
-# import pytorch_colors as colors
 
 path = os.getcwd()
 sys.path.append(path)
@@ -213,9 +212,9 @@ class Lowlight_DatasetFromVOC(data.Dataset):
         ori_img = ImageEnhance.Color(ori_img).enhance(color_dim_factor)
         ori_img = ImageEnhance.Contrast(ori_img).enhance(contrast_dim_factor)
 
-        ori_img = cv2.cvtColor((np.asarray(ori_img)), cv2.COLOR_RGB2BGR)  # cv2 image  toBGR??
+        ori_img = cv2.cvtColor((np.asarray(ori_img)), cv2.COLOR_RGB2BGR)   
         ori_img = (ori_img.clip(0, 255)).astype("uint8")
-        low_img = ori_img.astype('double') / 255.0                        # /255.0
+        low_img = ori_img.astype('double') / 255.0                         
 
         # generate low-light image
         beta  = 0.5 * random.random() + 0.5
@@ -223,9 +222,9 @@ class Lowlight_DatasetFromVOC(data.Dataset):
         gamma = 3.5 * random.random() + 1.5
         low_img = beta * np.power(alpha * low_img, gamma)
 
-        low_img = low_img * 255.0                                         # *255.0
-        low_img = (low_img.clip(0, 255)).astype("uint8")   # uint8
-        low_img = Image.fromarray(cv2.cvtColor(low_img, cv2.COLOR_BGR2RGB))  # toRGB??
+        low_img = low_img * 255.0                                          
+        low_img = (low_img.clip(0, 255)).astype("uint8")  
+        low_img = Image.fromarray(cv2.cvtColor(low_img, cv2.COLOR_BGR2RGB))   
 
         img_in, img_tar = get_patch(low_img, high_image, self.patch_size, self.upscale_factor)
 
@@ -233,7 +232,7 @@ class Lowlight_DatasetFromVOC(data.Dataset):
             img_in, img_tar, _ = augment(img_in, img_tar)
 
         if self.transform:
-            # transform is just to tensor
+        
             img_in  = self.transform(img_in)
             img_tar = self.transform(img_tar)
 

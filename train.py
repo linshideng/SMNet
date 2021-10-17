@@ -4,7 +4,6 @@ import os
 import time
 from os import listdir
 from os.path import join
-
 import cv2
 import numpy as np
 import torch
@@ -16,7 +15,6 @@ from PIL import Image
 from skimage.metrics._structural_similarity import structural_similarity as compare_ssim
 from skimage.metrics.simple_metrics import peak_signal_noise_ratio as compare_psnr
 from torch.utils.data import DataLoader
-
 import lib.pytorch_ssim as pytorch_ssim
 from lib.data import get_training_set, is_image_file
 from lib.utils import TVLoss, print_network, VGGPerceptualLoss
@@ -32,21 +30,22 @@ def cfg():
     parser.add_argument('--trainset', type=str, default='./datasets/LOL/train', help='location of trainset') 
     parser.add_argument('--testset', type=str, default='./datasets/LOL/test', help='location of testset') 
     
-    parser.add_argument('--output', default='output')
-    parser.add_argument('--modelname', default='SMNet')
-    parser.add_argument('--deviceid',default='0')
-    parser.add_argument('--lr', type=float, default=5e-4, help='Learning Rate')# 
+    parser.add_argument('--output', default='output', help='location to save output images')
+    parser.add_argument('--modelname', default='SMNet', help='define model name')
+
+    parser.add_argument('--deviceid',default='0', help='selecte which gpu device')
+    parser.add_argument('--lr', type=float, default=5e-4, help='Learning Rate') 
     parser.add_argument('--lr_decay',type=float,default=1.2,help='Every 50 epoch, lr decay')
     parser.add_argument('--batchSize', type=int, default=10, help='training batch size') 
     parser.add_argument('--nEpochs', type=int, default=600, help='number of epochs to train for')
     parser.add_argument('--snapshots', type=int, default=5, help='Snapshots')
+
     parser.add_argument('--start_iter', type=int, default=0, help='Starting Epoch')
     parser.add_argument('--gpu_mode', type=bool, default=True)
     parser.add_argument('--threads', type=int, default=16, help='number of threads for data loader to use')
     parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
     parser.add_argument('--gpus', default=1, type=int, help='number of gpu')
     parser.add_argument('--patch_size', type=int, default=128, help='Size of cropped LR image')
-    # parser.add_argument('--save_folder', default='models_LOL_add_x_bright/', help='Location to save checkpoint models')
 
     opt = parser.parse_args()
     return opt
@@ -77,8 +76,9 @@ def eval(model, epoch, writer, txt_write, opt):
     trans = transforms.ToTensor()
     channel_swap = (1, 2, 0)
     model.eval()
-    test_LL_folder = os.path.join( opt.testset,"low") 
-    test_NL_folder = os.path.join( opt.testset,"high") 
+    # Pay attention to the data structure
+    test_LL_folder = os.path.join( opt.testset,"low")
+    test_NL_folder = os.path.join( opt.testset,"high")
     test_est_folder = os.path.join(opt.output,opt.modelname,'eopch_%04d'% (epoch))
     try:
         os.stat(test_est_folder)
@@ -90,7 +90,6 @@ def eval(model, epoch, writer, txt_write, opt):
     for i in range(test_LL_list.__len__()):
         with torch.no_grad():
             LL = trans(Image.open(test_LL_list[i]).convert('RGB')).unsqueeze(0).to(device)
-
             prediction = model(LL)
             prediction = prediction.data[0].cpu().numpy().transpose(channel_swap)
             prediction = prediction * 255.0
@@ -133,7 +132,7 @@ def main(opt):
         gpus_list = range(opt.gpus)
 
         # =============================#
-        #   Prepare training data     #
+        #   Prepare training data      #
         # =============================#
         print('===> Prepare training data')
         print('#### Now dataset is LOL ####')
@@ -203,7 +202,7 @@ def main(opt):
                 inner_loss = torch.dot(pred_t_flatten, LL_t_flatten) / (LL_t.shape[0])/ (LL_t.shape[1])/(LL_t.shape[2])/(LL_t.shape[3])
                 ssim_loss = 1 - ssim(pred_t, NL_t)
                 tv_loss = TV_loss(pred_t)
-                p_loss = percep_loss(pred_t, NL_t) #
+                p_loss = percep_loss(pred_t, NL_t) 
                 smoothloss  = smooth_criterion(pred_t, NL_t)
                
                 loss = 1*ssim_loss +1*p_loss + 1*smoothloss  + 1*inner_loss+0.001*tv_loss
