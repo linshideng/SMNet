@@ -19,7 +19,8 @@ def eval(opt):
     model = lowlightnet3()
     model = model.to(device)
     if str.lower(opt.modeltype) == 'fivek':
-        model = torch.nn.DataParallel(model, device_ids=opt.device)
+        print("Using dataparallel")
+        model = torch.nn.DataParallel(model, device_ids=[opt.device])
     model.load_state_dict(torch.load(opt.modelfile))
     model.eval()
     
@@ -64,11 +65,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='low-light image enhancement by SMNet')
     parser.add_argument('--test_folder', type=str, default='./datasets/LOL/test/low',help='location to input images')
-    parser.add_argument('--modelfile', default='./model.pth', help='pretrained model')
     parser.add_argument('--output', default='./output_test', help='location to save output images')
     parser.add_argument('--device', type=str, default='0')
-    parser.add_argument('--modeltype', type=str, default='LOL', help="to choose pretrained model training on LOL or FiveK")
 
+    # modelfile and modeltype should be same kind 
+    parser.add_argument('--modelfile', default='./model_LOL.pth', help='pretrained model LOL or FIVEK')
+    parser.add_argument('--modeltype', type=str, default='LOL', help="to choose pretrained model training on LOL or FiveK")
+    
     parser.add_argument('--testBatchSize', type=int, default=1, help='testing batch size')
     parser.add_argument('--gpu_mode', type=bool, default=True)
     parser.add_argument('--patch_size', type=int, default=256, help='0 to use original frame size')
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     if str.lower(opt.modeltype) == 'lol':
         from model_LOL import lowlightnet3
     elif str.lower(opt.modeltype) == 'fivek':
-        from model_FiveK import lowlightnet3
+        from model_FIVEK import lowlightnet3
     else:
         print("======>Now using default model LOL")
         from model_LOL import lowlightnet3  

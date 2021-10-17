@@ -30,7 +30,7 @@ ptyhon test.py  --test_folder  path_to_images  --output save_images_here  --mode
 ```
 Example:
 ```
-ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model.pth --modeltype lol
+ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model_LOL.pth --modeltype lol
 ```
 You can change the `--test_folder` to test your own dataset.
 ### Training
