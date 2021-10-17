@@ -20,7 +20,10 @@ def eval(opt):
     model = model.to(device)
     if str.lower(opt.modeltype) == 'fivek':
         print("Using dataparallel")
-        model = torch.nn.DataParallel(model, device_ids=[opt.device])
+        # when dataparallel, default gpu device is 0
+        model = torch.nn.DataParallel(model, device_ids=[0])
+    else:
+        pass
     model.load_state_dict(torch.load(opt.modelfile))
     model.eval()
     
@@ -79,13 +82,8 @@ if __name__ == "__main__":
     parser.add_argument('--threads', type=int, default=1, help='number of threads for data loader to use')
     parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
     parser.add_argument('--gpus', default=1, type=int, help='number of gpu')
-    # parser.add_argument('--image_based', type=bool, default=True, help='use image or video based ULN')
-    # parser.add_argument('--chop', type=bool, default=False)
-    # parser.add_argument('--upscale_factor', type=int, default=1, help="super resolution upscale factor")
-    # parser.add_argument('--chop_forward', type=bool, default=True)
     
     opt = parser.parse_args()
-    # gpus_list = range(opt.gpus)
     print(opt)
 
     cuda = opt.gpu_mode
