@@ -4,7 +4,6 @@ import torchvision.transforms as transforms
 import numpy as np
 from os.path import join
 import time
-import math
 from lib.dataset import is_image_file
 from PIL import Image
 from os import listdir
@@ -12,11 +11,17 @@ import os
 
 
 def eval(opt):
+    
+    # Define gpu device
     device = torch.device('cuda:{}'.format(opt.device))
+    
+    # Load model
     model = lowlightnet3()
     model = model.to(device)
     model.load_state_dict(torch.load(opt.modelfile))
     model.eval()
+    
+    # Get filename; Please ensure  both h&w resolution of inpu image can devided by 4, such as 600*400
     LL_filename = os.path.join(opt.test_folder)
     est_filename = os.path.join(opt.output)
     try:
@@ -52,14 +57,14 @@ def eval(opt):
             prediction = prediction.clip(0, 255)
             Image.fromarray(np.uint8(prediction)).save(Est_img[i])
             print("===> Processing Image: %04d /%04d in %.4f s." % (i, LL_image.__len__(), (t1 - t0)))
-    # print("Processing FPS: {} ".format(time_ave / LL_image.__len__() ))
+    
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='low-light image enhancement by SMNet')
-    parser.add_argument('--test_folder', type=str, default='./datasets/LOL/test/low',help='Location to input images')
+    parser.add_argument('--test_folder', type=str, default='./datasets/LOL/test/low',help='location to input images')
     parser.add_argument('--modelfile', default='./model.pth', help='pretrained model')
-    parser.add_argument('--output', default='./output_test', help='Location to save output images')
+    parser.add_argument('--output', default='./output_test', help='location to save output images')
     parser.add_argument('--device', type=str, default='0')
     parser.add_argument('--modeltype', type=str, default='LOL', help="to choose pretrained model training on LOL or FiveK")
 
@@ -76,7 +81,7 @@ if __name__ == "__main__":
     # parser.add_argument('--chop_forward', type=bool, default=True)
     
     opt = parser.parse_args()
-    gpus_list = range(opt.gpus)
+    # gpus_list = range(opt.gpus)
     print(opt)
 
     cuda = opt.gpu_mode
@@ -86,12 +91,12 @@ if __name__ == "__main__":
     torch.manual_seed(opt.seed)
     if cuda:
         torch.cuda.manual_seed(opt.seed)
+    
+    # To choose pretrained model training on LOL or FiveK
     if str.lower(opt.modeltype) == 'lol':
         from model_LOL import lowlightnet3
-
     elif str.lower(opt.modeltype) == 'fivek':
         from model_FiveK import lowlightnet3
-
     else:
         print("======>Now using default model LOL")
         from model_LOL import lowlightnet3  

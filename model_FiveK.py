@@ -30,7 +30,7 @@ class FusionLayer(nn.Module):
         fusion = self.outlayer(fusion)
         return fusion
 
-class EncoderBlock(nn.Module):  # 
+class EncoderBlock(nn.Module): 
     def __init__(self, input_dim, out_dim,):
         super(EncoderBlock, self).__init__()
         hidden = input_dim // 4
@@ -41,12 +41,9 @@ class EncoderBlock(nn.Module):  #
                         ConvBlock(hidden,out_dim,1,1,0,isuseBN=False),
                         ConvBlock(out_dim,out_dim,3,1,1,isuseBN=False))
         
-
-
     def forward(self, x):
         out = self.SGblock(x)
         out = out + x
-        
         return out
 
 class ResidualDownSample(nn.Module):
@@ -61,7 +58,6 @@ class ResidualDownSample(nn.Module):
         out = self.prelu(self.conv1(x))
         out = self.downsamp(out)
         out = self.conv2(out)
- 
         return out
 
 class DownSample(nn.Module):
@@ -117,7 +113,6 @@ class lowlightnet3(nn.Module):
         self.out_conv4 = nn.Conv2d(4,3,1,1,0)
         self.dim2four = ConvBlock(dim, 4, 3, 1, 1)
 
-
         self.firstconv = nn.Sequential(ConvBlock(input_size=4,output_size=dim,kernel_size=3,stride=1,padding=1),
                                        EncoderBlock(input_dim=dim,out_dim=dim))
         self.downsample   = DownSample(in_channel=dim,scale_factor=2)
@@ -129,7 +124,6 @@ class lowlightnet3(nn.Module):
         self.endecoder2x  = EncoderBlock(2*dim,2*dim)
         self.endecoder4x  = EncoderBlock(4*dim,4*dim)
 
-
         self.fourto32     = ConvBlock(input_size=4, output_size=32,kernel_size=3,stride=1,padding=1)
         self.sanshierto64 = ConvBlock(input_size=32,output_size=64,kernel_size=3,stride=1,padding=1)
 
@@ -137,7 +131,6 @@ class lowlightnet3(nn.Module):
     def forward(self, x_ori, tar=None):
         x_bright, _ = torch.max(x_ori, dim=1, keepdim=True)
         x_in = torch.cat((x_ori, x_bright), 1)
-        
         f_endecoder = self.firstconv(x_in)
 
         # channel=3dim
@@ -157,7 +150,6 @@ class lowlightnet3(nn.Module):
         fusion_all = self.out_fushion(cat_all)
         fusion_out = self.out_conv2(fusion_all)+fullres  
 
-      
         out1 = self.out_conv4(self.dim2four(fusion_out)+x_bright) 
 
         # here is 2nd block out
@@ -193,12 +185,9 @@ class lowlightnet3(nn.Module):
         cat_all3 = torch.cat((ende_fullres_out3, ende_quarres_up_up3, ende_halfres_up3), dim=1)
         fusion_all3 = self.out_fushion(cat_all3)
         fusion_out3 = self.out_conv2(fusion_all3)+fullres3
-
-
         
         out3 =self.out_conv4(self.dim2four(fusion_out3) + x_bright)
 
-        
         return out3, out2, out1, \
             x_bright,f_endecoder,ende_quarres3,ende_halfres3,ende_fullres_out3,\
             ende_quarres2,ende_halfres2,ende_fullres_out2,\

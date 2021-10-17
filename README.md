@@ -14,9 +14,11 @@ SMNet is built by:
 - pillow   5.2.0 
 
 ## Usage
-Tips: The h/w resolution of all input images shall be divided by 4, such as 600*400.
+Tips:
+-  The h/w resolution of all input images shall be divided by 4, such as 600*400.
+-  We provide a few test images in `./dataset`.
 ### Testing
-To test the pre-trained model on your own images, just run:
+To test the pre-trained model on LOL dataset, just run:
 ```
 bash test.sh
 ```
@@ -24,16 +26,16 @@ bash test.sh
 or run:
 
 ```
-ptyhon test.py  --test_folder  path_to_images  --output save_images_here  --modelfile pretrained_model 
+ptyhon test.py  --test_folder  path_to_images  --output save_images_here  --modelfile pretrained_model --modeltype lol
 ```
 Example:
 ```
-ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model.pth
+ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model.pth --modeltype lol
 ```
-
+You can change the `--test_folder` to test your own dataset.
 ### Training
 Before training  on your own dataset, you should place images like 
-- your_image_path
+- your_dataset
   - train
     - high
     - low
@@ -41,8 +43,7 @@ Before training  on your own dataset, you should place images like
     - high
     - low
 
-
-where train/test low-light images are placed in low, train/test ground truth are placed in high.
+`train` `low`/`high` includes low-light images and their ground truth for training, while `test` `low`/`high ` includes low-light images and their ground truth for testing.
 
 To train the model, run:
 ```

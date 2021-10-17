@@ -242,14 +242,11 @@ def conv3x3(in_planes, out_planes, stride=1):
 class DeconvBlock(torch.nn.Module):
     def __init__(self, input_size, output_size, kernel_size, stride, padding, bias=True):
         super(DeconvBlock, self).__init__()
-
         self.deconv = torch.nn.ConvTranspose2d(input_size, output_size, kernel_size, stride, padding, bias=bias)
-
         self.act = torch.nn.PReLU()
 
     def forward(self, x):
         out = self.deconv(x)
-
         return self.act(out)
 
 

@@ -41,8 +41,8 @@ class color_constency_loss(nn.Module):
     def __init__(self,):
         super(color_constency_loss, self).__init__()
 
-    def forward(self, enhances): # from ZERO-DCE 求不同通道两两的不同
-        plane_avg = enhances.mean((2, 3)) # 求0,1通道BC的均值
+    def forward(self, enhances):  
+        plane_avg = enhances.mean((2, 3))  
         col_loss = torch.mean((plane_avg[:, 0] - plane_avg[:, 1]) ** 2
                               + (plane_avg[:, 1] - plane_avg[:, 2]) ** 2
                               + (plane_avg[:, 2] - plane_avg[:, 0]) ** 2)
@@ -52,23 +52,20 @@ class VGGPerceptualLoss(torch.nn.Module):
     def __init__(self, resize=False):
         super(VGGPerceptualLoss, self).__init__()
         blocks = []
-        model = torchvision.models.vgg16(pretrained=False)  # 在这里.cuda（）模型会自动选取device=0的进入cuda
+        model = torchvision.models.vgg16(pretrained=False)  
         pre = torch.load('/homesda/sdlin/.cache/torch/checkpoints/vgg16-397923af.pth')
         model.load_state_dict(pre)
         blocks.append(model.features[:4].eval())
         blocks.append(model.features[4:9].eval())
         blocks.append(model.features[9:16].eval())
         blocks.append(model.features[16:23].eval())
-        # blocks.append(torchvision.models.vgg16(pretrained=True).features[:4].eval())
-        # blocks.append(torchvision.models.vgg16(pretrained=True).features[4:9].eval())
-        # blocks.append(torchvision.models.vgg16(pretrained=True).features[9:16].eval())
-        # blocks.append(torchvision.models.vgg16(pretrained=True).features[16:23].eval())
+        
         for bl in blocks:
             for p in bl:
                 p.requires_grad = False
         self.blocks = torch.nn.ModuleList(blocks)
         self.transform = torch.nn.functional.interpolate
-        # 需要取均值和方差嘛
+   
         self.mean = torch.nn.Parameter(torch.tensor([0.485, 0.456, 0.406]).view(1,3,1,1)) 
         self.std = torch.nn.Parameter(torch.tensor([0.229, 0.224, 0.225]).view(1,3,1,1))
         self.resize = resize
@@ -79,10 +76,9 @@ class VGGPerceptualLoss(torch.nn.Module):
             target = target.repeat(1, 3, 1, 1)
         input = (input-self.mean) / self.std
         target = (target-self.mean) / self.std
-        # 不需要resiaze吧
-        # 两种情况，patch<224，patch>224,如果大于，则resize可能会好一点
+    
         if self.resize:
-            input  = self.transform(input, mode='bilinear', size=(128, 128), align_corners=False) # 224
+            input  = self.transform(input, mode='bilinear', size=(128, 128), align_corners=False) 
             target = self.transform(target, mode='bilinear', size=(128, 128), align_corners=False)
         loss = 0.0
         x = input
