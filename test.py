@@ -17,7 +17,10 @@ def eval(opt):
     
     # Load model
     model = lowlightnet3()
+     
     model = model.to(device)
+    if str.lower(opt.modeltype) == 'fivek':
+        model = torch.nn.DataParallel(model, device_ids=opt.device)
     model.load_state_dict(torch.load(opt.modelfile))
     model.eval()
     
@@ -47,9 +50,8 @@ def eval(opt):
             prediction = model(LL)
             t1 = time.time()
             time_ave += (t1 - t0)
-            if str.lower(opt.modeltype) == 'lol':
-                prediction = prediction.data[0].cpu().numpy().transpose(channel_swap)
-            elif str.lower(opt.modeltype) == 'fivek':
+        
+            if str.lower(opt.modeltype) == 'fivek':
                 prediction = prediction[0].data[0].cpu().numpy().transpose(channel_swap)
             else:    
                 prediction = prediction.data[0].cpu().numpy().transpose(channel_swap)
