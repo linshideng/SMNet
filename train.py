@@ -52,10 +52,8 @@ def cfg():
 
 def checkpoint(model, epoch, opt):
     save_folder = os.path.join('models',opt.modelname)   
-    try:
-        os.stat(save_folder)
-    except:
-        os.mkdir(save_folder)
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
     model_out_path = os.path.join(save_folder,"{}_{}.pth".format(opt.modelname,epoch))  
     torch.save(model.state_dict(), model_out_path)
     print("Checkpoint saved to {}".format(model_out_path))
