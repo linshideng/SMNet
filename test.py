@@ -97,12 +97,11 @@ if __name__ == "__main__":
         torch.cuda.manual_seed(opt.seed)
     
     # To choose pretrained model training on LOL or FiveK
-    if str.lower(opt.modeltype) == 'lol':
-        from model_LOL import lowlightnet3
-    elif str.lower(opt.modeltype) == 'fivek':
+    if str.lower(opt.modeltype) == 'fivek':
+        print('======>Now using model_FIVEK')
         from model_FIVEK import lowlightnet3
     else:
-        print("======>Now using default model LOL")
+        print("======>Now using default model_LOL")
         from model_LOL import lowlightnet3  
-           
+
     eval(opt)
