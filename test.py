@@ -17,7 +17,6 @@ def eval(opt):
     
     # Load model
     model = lowlightnet3()
-     
     model = model.to(device)
     if str.lower(opt.modeltype) == 'fivek':
         model = torch.nn.DataParallel(model, device_ids=opt.device)
