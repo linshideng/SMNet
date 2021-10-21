@@ -52,7 +52,12 @@ moreover, you should use the `vgg16.pth` for perceptual loss. The file has been 
 
 `train` `low`/`high` includes low-light images and their ground truth for training, while `test` `low`/`high ` includes low-light images and their ground truth for testing.
 
-To train the model, run:
+To train the model, just run:
+
+```
+bash train.sh
+```
+or run:
 ```
 python train.py --trainset  path_to_trainset  --testset path_to_testset  --output  save_inter_images
 ```
