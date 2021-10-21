@@ -30,11 +30,11 @@ bash test.sh
 or run:
 
 ```
-ptyhon test.py  --test_folder  path_to_images  --output save_images_here  --modelfile pretrained_model --modeltype lol
+python test.py  --test_folder  path_to_images  --output save_images_here  --modelfile pretrained_model --modeltype lol
 ```
 Example:
 ```
-ptyhon test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model_LOL.pth --modeltype LOL
+python test.py  --test_folder  ./datasets/LOL/test/low  --output  ./output_test  --modelfile ./model_LOL.pth --modeltype LOL
 ```
 - You can change the `--test_folder` to test your own dataset.
 - You can use the pretrained model training on Adobe-MIT FiveK dataset by `--modelfile ./model_FIVEK.pth --modeltype FIVEK`
