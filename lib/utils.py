@@ -53,7 +53,7 @@ class VGGPerceptualLoss(torch.nn.Module):
         super(VGGPerceptualLoss, self).__init__()
         blocks = []
         model = torchvision.models.vgg16(pretrained=False)  
-        pre = torch.load('./vgg16.pth')
+        pre = torch.load('/homesda/sdlin/vgg16.pth')
         model.load_state_dict(pre)
         blocks.append(model.features[:4].eval())
         blocks.append(model.features[4:9].eval())

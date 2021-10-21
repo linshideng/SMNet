@@ -48,13 +48,13 @@ Before training  on your own dataset, you should place images like
     - high
     - low
 
-and put the `vgg16.pth` (for perceptual loss) in `./lib`, the file was uploaded at [Baidu Netdisk](https://pan.baidu.com/s/1QIV50-mN_3NpMg2BYbKM7Q)(code: hzfs) and [Goole Drive](https://drive.google.com/file/d/1b1odcQXTSJSnWZBu3PWPDei9zYTFIxSu/view?usp=sharing).
+moreover, you should use the `vgg16.pth` for perceptual loss. The file has been uploaded to [Baidu Netdisk](https://pan.baidu.com/s/1QIV50-mN_3NpMg2BYbKM7Q)(code: hzfs) and [Goole Drive](https://drive.google.com/file/d/1b1odcQXTSJSnWZBu3PWPDei9zYTFIxSu/view?usp=sharing). And please change the **absolute path** in line 56 of `lib/utils.py`.  
 
 `train` `low`/`high` includes low-light images and their ground truth for training, while `test` `low`/`high ` includes low-light images and their ground truth for testing.
 
 To train the model, run:
 ```
-python train.py  --trainset  path_to_trainset  --testset path_to_testset  --output  save_inter_images
+python train.py --trainset  path_to_trainset  --testset path_to_testset  --output  save_inter_images
 ```
 Example:
 ```
