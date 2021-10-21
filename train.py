@@ -22,7 +22,7 @@ from torch.utils.tensorboard import SummaryWriter
 import warnings
 warnings.filterwarnings('ignore')
 
-
+# Using model_LOL by default
 from model_LOL import lowlightnet3
 
 def cfg():
