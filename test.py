@@ -97,7 +97,7 @@ if __name__ == "__main__":
     # To choose pretrained model training on LOL or FiveK
     if str.lower(opt.modeltype) == 'fivek':
         print('======>Now using model_FIVEK')
-        from model_FIVEK import lowlightnet3
+        from model_FiveK import lowlightnet3
     else:
         print("======>Now using default model_LOL")
         from model_LOL import lowlightnet3  
