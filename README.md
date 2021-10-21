@@ -11,7 +11,7 @@ The SMNet has good performance to enhance low-light images.
 ## Requirements
 SMNet is built by:
 - python 3.7.3
-- pytor 1.1.0
+- pytorh 1.1.0
 - scikit-image   0.14.5  
 - scipy   1.1.0     
 - opencv-python    4.1.1.26   
