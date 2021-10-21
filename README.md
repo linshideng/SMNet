@@ -48,7 +48,7 @@ Before training  on your own dataset, you should place images like
     - high
     - low
 
-and put the `vgg16.pth` (for perceptual loss) to `./lib`, the file was uploaded at [Baidu Netdik](https://pan.baidu.com/s/1QIV50-mN_3NpMg2BYbKM7Q)(hzfs) and Goole Drive.
+and put the `vgg16.pth` (for perceptual loss) in `./lib`, the file was uploaded at [Baidu Netdisk](https://pan.baidu.com/s/1QIV50-mN_3NpMg2BYbKM7Q)(code: hzfs) and [Goole Drive](https://drive.google.com/file/d/1b1odcQXTSJSnWZBu3PWPDei9zYTFIxSu/view?usp=sharing).
 
 `train` `low`/`high` includes low-light images and their ground truth for training, while `test` `low`/`high ` includes low-light images and their ground truth for testing.
 
