@@ -11,8 +11,8 @@ In this paper, we focus on integrating both local and global aspects to achieve 
 A synchronous multi-scale representation learning structure and a global feature recalibration module are adopted in SMNet.
 Different from traditional multi-scale feature learning architecture, SMNet carries out the multi-scale representation learning in a synchronous way: we first calculate the rough contextual representations in a top-down manner and then learn multi-scale representations in a bottom-up way to generate representations with rich local details.
 To acquire global brightness information, a global feature recalibration module (GFRM) is applied after the synchronous multi-scale representations to perceive and exploit proper global information by global pooling and projection to recalibrate channel weights globally.
-The synchronous multi-scale representation and GFRM compose the basic local-and-global (L$\&$G) block. 
-By stacking several L$\&$G blocks, the proposed SMNet could enhance the input low light images by applying local representation and global recalibration.
+The synchronous multi-scale representation and GFRM compose the basic local-and-global (L&G) block. 
+By stacking several L&G blocks, the proposed SMNet could enhance the input low light images by applying local representation and global recalibration.
 With above considerable structures, our model generates high quality outputs.
 Experimental results on mainstream real-world dataset LOL and synthetic dataset MIT-Adobe FiveK show that the proposed SMNet not only leads the way on objective metrics but also is superior in subjective comparisons compared with typical SoTA methods. 
 The implement code had already been uploaded to: https://github.com/linshideng/SMNet. 
