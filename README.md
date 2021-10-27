@@ -1,7 +1,7 @@
 # SMNet
 SMNet: Synchronous Multi-scale Low Light EnhancementNetwork with Local and Global Concern.
 
-by SHIDENG LIN, FAN TANG, XINGJIA PAN, WEIMING DONG and CHANGSHENG XU.
+by SHIDENG LIN, FAN TANG, WEIMING DONG, XINGJIA PAN and CHANGSHENG XU.
 
 The SMNet has good performance to enhance low-light images.
 ## Abstract
